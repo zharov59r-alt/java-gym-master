@@ -13,24 +13,14 @@ public class Timetable {
             if (timetable.get(trainingSession.getDayOfWeek()).containsKey(trainingSession.getTimeOfDay())) {
                 timetable.get(trainingSession.getDayOfWeek()).get(trainingSession.getTimeOfDay()).add(trainingSession);
             } else {
-                timetable.get(trainingSession.getDayOfWeek()).put(
-                    trainingSession.getTimeOfDay(),
-                    new ArrayList<>() {{add(trainingSession);}}
-                );
+                timetable.get(trainingSession.getDayOfWeek()).put(trainingSession.getTimeOfDay(), new ArrayList<>() {{add(trainingSession);}});
             }
         } else {
             timetable.put(
                 trainingSession.getDayOfWeek(),
                 new TreeMap<>(
-                    Map.of(
-                        trainingSession.getTimeOfDay(),
-                        new ArrayList<>() {{add(trainingSession);}}
-                    )
-                )
-            );
+                    Map.of(trainingSession.getTimeOfDay(), new ArrayList<>() {{add(trainingSession);}})));
         }
-
-
 
     }
 
