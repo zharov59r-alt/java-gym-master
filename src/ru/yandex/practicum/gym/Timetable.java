@@ -9,30 +9,41 @@ public class Timetable {
     public void addNewTrainingSession(TrainingSession trainingSession) {
         //сохраняем занятие в расписании
 
-        if (timetable.containsKey(trainingSession.getDayOfWeek())) {
-            if (timetable.get(trainingSession.getDayOfWeek()).containsKey(trainingSession.getTimeOfDay())) {
-                timetable.get(trainingSession.getDayOfWeek()).get(trainingSession.getTimeOfDay()).add(trainingSession);
+        DayOfWeek dayOfWeek = trainingSession.getDayOfWeek();
+        TimeOfDay timeOfDay = trainingSession.getTimeOfDay();
+
+        if (timetable.containsKey(dayOfWeek)) {
+
+            TreeMap<TimeOfDay, ArrayList<TrainingSession>> dayTimetable = timetable.get(dayOfWeek);
+
+            if (dayTimetable.containsKey(timeOfDay)) {
+                dayTimetable.get(timeOfDay).add(trainingSession);
             } else {
-                timetable.get(trainingSession.getDayOfWeek()).put(trainingSession.getTimeOfDay(), new ArrayList<>() {{ add(trainingSession);
-                }
-                });
+                ArrayList<TrainingSession> trainingSessions = new ArrayList<>();
+                trainingSessions.add(trainingSession);
+                dayTimetable.put(timeOfDay, trainingSessions);
             }
+
         } else {
-            timetable.put(
-                trainingSession.getDayOfWeek(),
-                new TreeMap<>(Map.of(trainingSession.getTimeOfDay(), new ArrayList<>() {{ add(trainingSession);
-                }
-                })));
+
+            TreeMap<TimeOfDay, ArrayList<TrainingSession>> dayTimetable = new TreeMap<>();
+            ArrayList<TrainingSession>  trainingSessions = new ArrayList<>();
+
+            trainingSessions.add(trainingSession);
+            dayTimetable.put(timeOfDay, trainingSessions);
+
+            timetable.put(dayOfWeek, dayTimetable);
+
         }
 
     }
 
     public TreeMap<TimeOfDay, ArrayList<TrainingSession>> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
-        return timetable.get(dayOfWeek);
+        return timetable.getOrDefault(dayOfWeek, new TreeMap<>());
     }
 
     public ArrayList<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
-        return timetable.get(dayOfWeek).get(timeOfDay);
+        return timetable.getOrDefault(dayOfWeek, new TreeMap<>()).getOrDefault(timeOfDay, new ArrayList<>());
     }
 
     public ArrayList<CounterOfTrainings> getCountByCoaches() {
